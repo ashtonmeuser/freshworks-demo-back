@@ -1,0 +1,12 @@
+service: freshworks-demo-back
+provider:
+  name: aws
+  runtime: nodejs10.x
+
+functions:
+  hello:
+    handler: test.handler
+    events:
+      - http:
+          path: test
+          method: get
