@@ -2,11 +2,34 @@ service: freshworks-demo-back
 provider:
   name: aws
   runtime: nodejs10.x
+  region: us-west-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - 'Fn::GetAtt': [FeedingTable, Arn]
 
 functions:
-  hello:
+  test:
     handler: test.handler
     events:
       - http:
           path: test
           method: get
+
+resources:
+  Resources:
+    FeedingTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: freshworks-demo-feeding-table
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
