@@ -4,16 +4,10 @@ const uuid = require('uuid/v1');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const tableName = 'freshworks-demo-feeding-table';
 
-module.exports.handler = async () => {
+module.exports.handler = async (event) => {
   try {
-    const feeding = {
-      id: uuid(),
-      location: 'Victoria',
-      time: '12:34',
-      foodType: 'bread',
-      foodQuantity: 2,
-      duckQuantity: 3,
-    };
+    const data = JSON.parse(event.body);
+    const feeding = { ...data, id: uuid() };
     const params = {
       TableName: tableName,
       Item: feeding,
