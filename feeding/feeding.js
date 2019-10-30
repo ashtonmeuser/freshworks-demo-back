@@ -16,7 +16,11 @@ const response = (data, code = 200) => ({ // Align headers, etc. for all respons
 module.exports.handler = async (event) => {
   try {
     const data = validateData(JSON.parse(event.body)); // Sanitized and validated
-    const feeding = { ...data, id: uuid() };
+    const feeding = {
+      ...data,
+      id: uuid(),
+      createdAt: Math.round(Date.now() / 1000),
+    };
     const params = { // DB client operation configuration
       TableName: tableName,
       Item: feeding,

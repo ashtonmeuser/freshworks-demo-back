@@ -10,6 +10,7 @@ const validators = { // Fields tested against their respective validators
   foodType: (v) => typeof v === 'string' && constants.foodTypes.includes(v),
   foodQuantity: (v) => typeof v === 'number' && v > 0,
   duckQuantity: (v) => typeof v === 'number' && v > 0,
+  schedule: (v) => typeof v === 'string' && v.match(/^U?M?T?W?R?F?S?$/) !== null,
 };
 const messages = { // Messages returned if validation errors encounterred
   location: 'Location must be a string with 4 or more characters',
@@ -17,6 +18,7 @@ const messages = { // Messages returned if validation errors encounterred
   foodType: 'Food type must be from acceptable list',
   foodQuantity: 'Food quantity must be numeral greater than 0',
   duckQuantity: 'Duck quantity must be numeral greater than 0',
+  schedule: 'Schedule must have valid one-letter day representation',
 };
 
 class ValidationError extends Error {
