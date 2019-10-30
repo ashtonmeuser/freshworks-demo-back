@@ -4,7 +4,7 @@ const { validateData, ValidationError } = require('./validate');
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const tableName = 'freshworks-demo-feeding-table';
-const response = (data, code = 200) => ({
+const response = (data, code = 200) => ({ // Align headers, etc. for all responses
   statusCode: code,
   headers: {
     'Access-Control-Allow-Origin': '*',
@@ -15,19 +15,19 @@ const response = (data, code = 200) => ({
 
 module.exports.handler = async (event) => {
   try {
-    const data = validateData(JSON.parse(event.body));
+    const data = validateData(JSON.parse(event.body)); // Sanitized and validated
     const feeding = { ...data, id: uuid() };
-    const params = {
+    const params = { // DB client operation configuration
       TableName: tableName,
       Item: feeding,
       ReturnValues: 'NONE',
     };
-    await dynamoDb.put(params).promise();
+    await dynamoDb.put(params).promise(); // Throws
     return response({ data });
   } catch (error) {
     if (error instanceof ValidationError) {
-      return response({ errors: error.errors }, 400);
+      return response({ errors: error.errors }, 400); // Submitted data failed validation
     }
-    return response({ errors: ['Unhandled server error'] }, 500);
+    return response({ errors: ['Unhandled server error'] }, 500); // FIXME: Handle errors
   }
 };
