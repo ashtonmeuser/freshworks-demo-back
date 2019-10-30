@@ -4,6 +4,14 @@ const { validateData, ValidationError } = require('./validate');
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const tableName = 'freshworks-demo-feeding-table';
+const response = (data, code = 200) => ({
+  statusCode: code,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': true,
+  },
+  body: JSON.stringify(data),
+});
 
 module.exports.handler = async (event) => {
   try {
@@ -15,32 +23,11 @@ module.exports.handler = async (event) => {
       ReturnValues: 'NONE',
     };
     await dynamoDb.put(params).promise();
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
-      },
-      body: JSON.stringify(data),
-    };
+    return response({ data });
   } catch (error) {
     if (error instanceof ValidationError) {
-      return {
-        statusCode: 400,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
-        },
-        body: JSON.stringify({ errors: error.errors }),
-      };
+      return response({ errors: error.errors }, 400);
     }
-    return {
-      statusCode: 500,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
-      },
-      body: JSON.stringify({ errors: ['Unhandled server error'] }),
-    };
+    return response({ errors: ['Unhandled server error'] }, 500);
   }
 };
