@@ -11,11 +11,11 @@ provider:
         - 'Fn::GetAtt': [FeedingTable, Arn]
 
 functions:
-  test:
-    handler: test.handler
+  feeding:
+    handler: feeding/feeding.handler
     events:
       - http:
-          path: test
+          path: feeding
           method: post
           cors: true
 
