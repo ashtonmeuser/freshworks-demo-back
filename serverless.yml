@@ -7,6 +7,8 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:PutItem
+        - dynamodb:Scan
+        - dynamodb:BatchWriteItem
       Resource:
         - 'Fn::GetAtt': [FeedingTable, Arn]
 
@@ -18,6 +20,10 @@ functions:
           path: feeding
           method: post
           cors: true
+  scheduled:
+    handler: scheduled/scheduled.handler
+    events:
+      - schedule: cron(0 0 0 * * ?)
 
 resources:
   Resources:
