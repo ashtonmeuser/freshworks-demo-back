@@ -1,8 +1,6 @@
-const AWS = require('aws-sdk');
-const uuid = require('uuid/v1');
+const db = require('../common/database');
 const { validateData, ValidationError } = require('./validate');
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const tableName = 'freshworks-demo-feeding-table';
 const response = (data, code = 200) => ({ // Align headers, etc. for all responses
   statusCode: code,
@@ -16,17 +14,7 @@ const response = (data, code = 200) => ({ // Align headers, etc. for all respons
 module.exports.handler = async (event) => {
   try {
     const data = validateData(JSON.parse(event.body)); // Sanitized and validated
-    const feeding = {
-      ...data,
-      id: uuid(),
-      createdAt: Math.round(Date.now() / 1000),
-    };
-    const params = { // DB client operation configuration
-      TableName: tableName,
-      Item: feeding,
-      ReturnValues: 'NONE',
-    };
-    await dynamoDb.put(params).promise(); // Throws
+    await db.put(tableName, data);
     return response({ data });
   } catch (error) {
     if (error instanceof ValidationError) {

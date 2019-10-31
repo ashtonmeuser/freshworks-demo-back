@@ -1,4 +1,4 @@
-const constants = require('../constants');
+const constants = require('../common/constants');
 
 // Trim unaccepted fields from submitted JSON data
 const pickProperties = (...props) => (dict) => props.reduce(
