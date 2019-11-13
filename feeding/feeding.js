@@ -14,6 +14,7 @@ const response = (data, code = 200) => ({ // Align headers, etc. for all respons
 module.exports.handler = async (event) => {
   try {
     const data = validateData(JSON.parse(event.body)); // Sanitized and validated
+    if (data.schedule === '') data.schedule = undefined; // Dynamo hates blank strings
     await db.put(tableName, data);
     return response({ data });
   } catch (error) {
